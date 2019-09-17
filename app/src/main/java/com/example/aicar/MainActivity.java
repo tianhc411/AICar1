@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.net.Socket;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -14,6 +16,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final ImageView a = findViewById(R.id.Y0);
+//        SocketThread socketThread = new SocketThread();
+
+//        try {
+//            Socket socket = serverClient.getLink();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
         a.setOnTouchListener(new View.OnTouchListener() {
             float lastRawX, lastRawY;
             float m1=280,m2=555;//摇杆起始点
@@ -25,15 +34,16 @@ public class MainActivity extends AppCompatActivity {
                         lastRawY = event.getRawY();
                         break;
                     case MotionEvent.ACTION_MOVE:
-//                        int dx = (int) (event.getRawX() - lastRawX);//相对坐标
-//                        int dy = (int) (event.getRawY() - lastRawY);//相对坐标
-//                        a.layout(a.getLeft() + dx, a.getTop() + dy, a.getRight() + dx, a.getBottom() + dy);//设置位置
                         float dx = (event.getRawX() - lastRawX-80);
                         float dy = (event.getRawY() - lastRawY-245);
                         float i=event.getRawX()+dx,j=event.getRawY()+dy;
-                       if (Math.sqrt(Math.pow(i-280,2)+Math.pow(j-555,2))<=120) {
+                       if (Math.sqrt(Math.pow(i-280,2)+Math.pow(j-555,2))<=110) {
                            v.setX(i);
                            v.setY(j);
+                           double number = Math.atan2((i- 280), (j - 555));
+                           double angle = number*(180/Math.PI);
+                           SocketThread socketThread = new SocketThread(angle);
+                           socketThread.start();
                        }
                         lastRawX = event.getRawX();
                         lastRawY = event.getRawY();
@@ -43,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
                         v.setY(m2);
                         break;
                 }
-
                 return true;
 
             }
